@@ -12,6 +12,7 @@ From PortfolioProject_Covid..CovidDeath
 WHERE Location Like 'Australia' AND total_cases IS NOT NULL
 
 --Looking at countries with highest infection rate
+--We need to set continent to NOT NUll because that will accurately shows location as countries. 
 
 SELECT Location, Population, MAX(Total_cases) AS MaxCases, MAX(ROUND((total_cases/Population)*100,2)) As PercentPopulationInfected
 From PortfolioProject_Covid..CovidDeath
@@ -27,9 +28,14 @@ WHERE continent IS NOT NULL
 GROUP BY Location
 ORDER BY TotalDeaths DESC
 
+--Looking at continent with highest death count
+--When continent is NULL the location data will include continent, income status and World
+
 SELECT location, MAX(cast(Total_deaths as int)) AS TotalDeaths
 From PortfolioProject_Covid..CovidDeath
 WHERE continent IS NULL
+AND Location Not in ('World','International','European Union')
+AND Location NOT LIKE '%income'
 GROUP BY location
 ORDER BY TotalDeaths DESC
 
@@ -48,6 +54,13 @@ SELECT SUM(new_cases) AS total_cases, SUM(cast(new_deaths as int)) as Total_deat
 , (SUM(cast(new_deaths as int))/SUM(new_cases))*100 AS DeathPercentage
 FROM PortfolioProject_Covid..CovidDeath
 WHERE continent IS NOT NULL
+
+--Double checking if the data above is correct
+--Select total_cases, total_deaths, ROUND((total_deaths/total_cases)*100,2) As death_percentage
+--FROM PortfolioProject_Covid..CovidDeath
+--WHERE Location = 'World'
+--ORDER BY Total_cases Desc
+--The data is extremely close so I decided to keep it. It make sense because adding all countries we will get global data.
 
 --Total population vs Vaccinations
 
